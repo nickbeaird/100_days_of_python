@@ -31,17 +31,21 @@ class Pomodoro:
             f"- {self._get_final_run_time()} minutes"
             )
 
-    def get_pomodoro_start(self):
+    def _get_pomodoro_start(self):
         return self.pomodoro_start
 
-    def get_pomodoro_end(self):
+    def _get_pomodoro_end(self):
         return self.pomodoro_end
 
     def start_pomodoro(self):
-        print(f"Starting a Pomodoro of {pom.run_time} minutes.")
+        print(f"Starting a Pomodoro of {self.run_time} minutes.")
+        self._start_pomodoro()
+        self._run_pom_countdown()
+    
+    def _start_pomodoro(self):
         self.pomodoro_start = dtm.now()
         self._set_pomodoro_end()
-        self._run_pom_countdown()
+        return self.pomodoro_start
 
     def _set_pomodoro_end(self):
         self.pomodoro_end = self.pomodoro_start + timedelta(minutes=self.run_time)
@@ -59,9 +63,8 @@ class Pomodoro:
         print("Starting break")
         self.checkmarks += 1
         print(f"You have {self.checkmarks} checkmarks.")
-        self._set_break_start_time()
-        break_duration = self.get_break_by_checkmarks()
-        print(f"running a break for {break_dura4ion}")
+        break_duration = self._set_break_duration_by_checkmarks()
+        print(f"running a break for {break_duration}")
         self._run_break_countdown()
         self.breaks += 1
         print(f"You have taken {self.breaks} breaks")
@@ -70,14 +73,15 @@ class Pomodoro:
         self.break_start_time = dtm.now()
         return self.break_start_time
 
-    def get_break_by_checkmarks(self):
+    def _set_break_duration_by_checkmarks(self):
+        self._set_break_start_time()
         if self.checkmarks % 4 == 0:
             return self._set_break_duration(0.75)
         return self._set_break_duration(0.15)
 
-    def _set_break_duration(self, break_time=None):
-        break_time = self.run_time * break_time
-        self.break_end_time = self.break_start_time + timedelta(minutes=break_run_time)
+    def _set_break_duration(self, run_time=None):
+        run_time = self.run_time * run_time
+        self.break_end_time = self.break_start_time + timedelta(minutes=run_time)
         return self.break_end_time
 
     def get_break_end(self):
