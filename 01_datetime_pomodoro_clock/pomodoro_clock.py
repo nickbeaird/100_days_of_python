@@ -1,83 +1,112 @@
+#! /usr/local/bin/python
+
 from datetime import datetime as dtm, timedelta
 import time
 import sys
 
 class Pomodoro():
-    def __init__(self, run_time, start_again=False):
+
+    def __init__(self, run_time):
         self.run_time = run_time
         self._initial_time = dtm.now()
-        self.number_of_check_marks = 0
-        self.number_of_breaks = 0
-        self.pomodoro_time = self._initial_time + timedelta(minutes=self.run_time)
-        self.start_again = False
-        self.remaining_time = self.pomodoro_time - self._initial_time
-        self.small_break = 0
-        self.big_break = 0
+        self.pomodoro_start = dtm.now()
+        self.pomodoro_end = self.pomodoro_start + timedelta(minutes=self.run_time)
+        self.checkmarks = 0
+        self.breaks = 0
+        self.break_start_time = None
+        self.break_end_time = None
+        self._end_time = None
 
     def _get_initial_time(self):
         return self._initial_time
 
-    def _small_break(self):
-        q, r = divmod(self.pomodoro_time, .15)
-        return r
+    def get_pomodoro_start(self):
+        return self.pomodoro_start
 
-    def _big_break(self):
-        q, r = divmod(self.pomodoro_time, .75)
-        return r
+    def get_pomodoro_end(self):
+        return self.pomodoro_end
 
+    def start_pomodoro(self):
+        self.pomodoro_start = dtm.now()
+        self._set_pomodoro_end()
+        return self.pomodoro_start
+
+    def _set_pomodoro_end(self):
+        self.pomodoro_end = self.pomodoro_start + timedelta(minutes=self.run_time)
+        return self.pomodoro_end
+
+    def remaining_pomodoro_time(self):
+        return self.pomodoro_end - dtm.now()
+        
     def all_done(self):
-        return self.number_of_breaks == 4 and self.number_of_check_marks == 4
+        return self.breaks == 4
 
-    def _get_rest_time(self):
-        if self.number_of_checks == 4:
-            break_duration = _big_break()
-            return "You have completed 4 pomodoros. Take a {break_duration} minute break.".format(break_duation)
-        break_duration = _small_break() 
-        return "Take a {break_duration} minute break".format(break_duration)
+    def start_break(self):
+        print('Starting break')
+        self.checkmarks += 1
+        self.breaks += 1 
+        self.break_start_time = dtm.now()
+        self.which_break()
+        return self.break_start_time
+    
+    def which_break(self):
+        if self.breaks % 4 == 0:
+            return self._big_break_time()
+        return self._small_break_time()
+    
+    def _small_break_time(self):
+        break_run_time = self.run_time * .15
+        self.break_end_time = self.break_start_time + timedelta(minutes=break_run_time)
+        return self.break_end_time
 
-    def _get_time(self):
-        return self.pomodoro_time
-   
+    def _big_break_time(self):
+        break_run_time = self.run_time * .75
+        self.break_end_time = self.break_start_time + timedelta(minutes=break_run_time)
+        return self.break_end_time
 
-    def _remaining_time(self):
-        self.remaining_time = self.pomodoro_time - dtm.now()
-        return self.remaining_time
+    def get_break_end(self):
+        return self.break_end_time
 
-    def get_user_check(self):
-        pass    
-
-    def _break(self):
-        self.number_of_check_marks += 1
-        self._get_rest_time()
-
+    def remaining_break_time(self):
+        remainder = self.break_end_time - dtm.now()
+        return remainder
 
 if __name__ == "__main__":
     user_time = sys.argv[1]
-     
-
+    clean_user_time = int(user_time)
+    pom = Pomodoro(clean_user_time)
+    
     while True:
         print("Start next Pomodoro?")
         user_input = input()
-        if user_input.lower() in ['y', 'yes']:
-            clean_user_time = int(user_time)
-            print(f"Starting a Pomodoro of {user_time} minutes")
-            pom = Pomodoro(clean_user_time)
-            start = pom._get_initial_time()
-            end = pom._get_time()
-            sec_rem = pom._remaining_time()
-            print(f"The time now is {start}, and you have until {end}. This is the total of {sec_rem} seconds.")
+        usr_input = user_input.lower()
+        
+        if usr_input in ['n', 'no']:
+            print("Not the right time for a Pomodoro.")
+            break 
+
+        if usr_input in ['y', 'yes']:
+            pom.start_pomodoro()
+            time_remaining = pom.remaining_pomodoro_time()
+            print(f"Starting a Pomodoro of {pom.run_time} minutes")
+            print(f"The time now is {pom.pomodoro_start}, and you have until {pom.pomodoro_end}. This is the total of {time_remaining} seconds.")
             
             while True:
-                time_remaining = pom._remaining_time()
+                time_remaining = pom.remaining_pomodoro_time()
                 print(f"The time remaining is {time_remaining}")
                 time.sleep(5) 
                 if time_remaining <= timedelta(0, 5, 0):
                     break
 
+            pom.start_break()
+            print("Starting break")  
+            print(f"The number of checkmarks is {pom.checkmarks} and the number of breaks is {pom.breaks}")
+            while True:
+                break_time_remaining = pom.remaining_break_time()
+                print(f"The break time remaining is {break_time_remaining}")        
+                time.sleep(5) 
+                if break_time_remaining <= timedelta(0, 5, 0):
+                    break
+
         if pom.all_done() == True:
             break
-
-            
-            
-
-        
