@@ -20,6 +20,17 @@ class Pomodoro:
     def _get_initial_time(self):
         return self._initial_time
 
+    def _get_final_run_time(self):
+        return dtm.now() - self._get_initial_time()
+
+    def focus_report(self):
+        print(f"\nThe user made it through:\n"
+            f"- {self.checkmarks} Pomodoro(s)\n"
+            f"- {self.breaks} break(s) \n\n"
+            f"The user had a focus time of:\n"
+            f"- {self._get_final_run_time()} minutes"
+            )
+
     def get_pomodoro_start(self):
         return self.pomodoro_start
 
@@ -107,18 +118,26 @@ if __name__ == "__main__":
     clean_user_time = int(user_time)
     pom = Pomodoro(clean_user_time)
 
-    while True:
-        print("Start next Pomodoro?")
-        user_input = input()
-        usr_input = user_input.lower()
 
-        if usr_input in ["n", "no"]:
-            print("Not the right time for a Pomodoro.")
-            break
+    try:
+        while True:
+            print("Start next Pomodoro?")
+            user_input = input()
+            usr_input = user_input.lower()
 
-        if usr_input in ["y", "yes"]:
-            pom.start_pomodoro()
-            pom.start_break()
-            
-        if pom.all_done() == True:
-            break
+            if usr_input in ["n", "no"]:
+                print("Not the right time for a Pomodoro.")
+                break
+
+            if usr_input in ["y", "yes"]:
+                pom.start_pomodoro()
+                pom.start_break()
+                
+            if pom.all_done() == True:
+                break
+
+    except KeyboardInterrupt:
+        pass
+
+    finally:
+        pom.focus_report()
