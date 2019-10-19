@@ -1,5 +1,5 @@
 #! /usr/local/bin/python
-
+import argparse
 from datetime import datetime as dtm, timedelta
 import time
 import sys
@@ -73,7 +73,11 @@ class Pomodoro:
 
 
 if __name__ == "__main__":
-    user_time = sys.argv[1]
+    parser = argparse.ArgumentParser(prog="POMODORO")
+    parser.add_argument("-m", "--min", help="set run time in minutes", dest="min")
+    args = parser.parse_args()
+    user_time = args.min
+
     clean_user_time = int(user_time)
     pom = Pomodoro(clean_user_time)
 
