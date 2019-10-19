@@ -60,8 +60,8 @@ class Pomodoro:
         self.checkmarks += 1
         print(f"You have {self.checkmarks} checkmarks.")
         self._set_break_start_time()
-        break_time = self.which_break()
-        print(f"running a break for {break_time}")
+        break_duration = self.get_break_by_checkmarks()
+        print(f"running a break for {break_dura4ion}")
         self._run_break_countdown()
         self.breaks += 1
         print(f"You have taken {self.breaks} breaks")
@@ -70,18 +70,13 @@ class Pomodoro:
         self.break_start_time = dtm.now()
         return self.break_start_time
 
-    def which_break(self):
-        if self.breaks % 4 == 0:
-            return self._big_break_time()
-        return self._small_break_time()
+    def get_break_by_checkmarks(self):
+        if self.checkmarks % 4 == 0:
+            return self._set_break_duration(0.75)
+        return self._set_break_duration(0.15)
 
-    def _small_break_time(self):
-        break_run_time = self.run_time * 0.15
-        self.break_end_time = self.break_start_time + timedelta(minutes=break_run_time)
-        return self.break_end_time
-
-    def _big_break_time(self):
-        break_run_time = self.run_time * 0.75
+    def _set_break_duration(self, break_time=None):
+        break_time = self.run_time * break_time
         self.break_end_time = self.break_start_time + timedelta(minutes=break_run_time)
         return self.break_end_time
 
