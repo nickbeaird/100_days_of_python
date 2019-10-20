@@ -24,12 +24,13 @@ class Pomodoro:
         return dtm.now() - self._get_initial_time()
 
     def focus_report(self):
-        print(f"\nThe user made it through:\n"
+        print(
+            f"\nThe user made it through:\n"
             f"- {self.checkmarks} Pomodoro(s)\n"
             f"- {self.breaks} break(s) \n\n"
             f"The user had a focus time of:\n"
             f"- {self._get_final_run_time()} minutes"
-            )
+        )
 
     def _get_pomodoro_start(self):
         return self.pomodoro_start
@@ -41,7 +42,7 @@ class Pomodoro:
         print(f"Starting a Pomodoro of {self.run_time} minutes.")
         self._start_pomodoro()
         self._run_pom_countdown()
-    
+
     def _start_pomodoro(self):
         self.pomodoro_start = dtm.now()
         self._set_pomodoro_end()
@@ -53,7 +54,6 @@ class Pomodoro:
 
     def remaining_pomodoro_time(self):
         time_remaining = self.pomodoro_end - dtm.now()
-        print(f"Keep your focus. You have {time_remaining} remaining in this Pomodoro.")
         return time_remaining
 
     def all_done(self):
@@ -68,7 +68,7 @@ class Pomodoro:
         self._run_break_countdown()
         self.breaks += 1
         print(f"You have taken {self.breaks} breaks")
-    
+
     def _set_break_start_time(self):
         self.break_start_time = dtm.now()
         return self.break_start_time
@@ -94,7 +94,9 @@ class Pomodoro:
     def _run_pom_countdown(self):
         while True:
             time_remaining = self.remaining_pomodoro_time()
-            print(f"The time remaining is {time_remaining}")
+            print(
+                f"Keep your focus. You have {time_remaining} remaining in this Pomodoro.\n"
+            )
             time.sleep(5)
             if time_remaining <= timedelta(0, 5, 0):
                 break
@@ -102,7 +104,9 @@ class Pomodoro:
     def _run_break_countdown(self):
         while True:
             break_time_remaining = self.remaining_break_time()
-            print(f"The break time remaining is {break_time_remaining}")
+            print(
+                f"Whew!! Take a break. You have {break_time_remaining} left in your break\n"
+            )
             time.sleep(5)
             if break_time_remaining <= timedelta(0, 5, 0):
                 break
@@ -117,10 +121,9 @@ if __name__ == "__main__":
     clean_user_time = int(user_time)
     pom = Pomodoro(clean_user_time)
 
-
     try:
         while True:
-            print("Start next Pomodoro?")
+            print("Start next Pomodoro? [Y/N]")
             user_input = input()
             usr_input = user_input.lower()
 
@@ -131,7 +134,7 @@ if __name__ == "__main__":
             if usr_input in ["y", "yes"]:
                 pom.start_pomodoro()
                 pom.start_break()
-                
+
             if pom.all_done() == True:
                 break
 
