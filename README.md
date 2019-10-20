@@ -3,7 +3,7 @@
 ## 01 DateTime 
 
 ### Pomodoro Clock
-Create a Pomodoro clock with command line argument. 
+Create a Pomodoro clock on the command line using your specified time. 
 
 ```bash
 python pomodoro_clock.py 10  # creates a Pomodoro clock that last for 10 minutes.  
