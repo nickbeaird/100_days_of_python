@@ -1,7 +1,9 @@
 #! /usr/local/bin/python
 import argparse
-from datetime import datetime as dtm, timedelta
 import time
+from collections import namedtuple
+from datetime import datetime as dtm
+from datetime import timedelta
 
 
 class Pomodoro:
@@ -55,6 +57,13 @@ class Pomodoro:
         time_remaining = self.pomodoro_end - dtm.now()
         return time_remaining
 
+    def _display_time_delta(self, time_delta):
+        sec = time_delta.seconds
+        tmin, tsec = divmod(sec, 60)
+        MinSeconds = namedtuple("MinSeconds", "minutes, seconds")
+        t = MinSeconds(tmin, tsec)
+        return t
+
     def all_done(self):
         return self.breaks == 4
 
@@ -93,8 +102,10 @@ class Pomodoro:
     def _run_pom_countdown(self):
         while True:
             time_remaining = self.remaining_pomodoro_time()
+            time_remaining_diplay = self._display_time_delta(time_remaining)
+
             print(
-                f"Keep your focus. You have {time_remaining} remaining in this Pomodoro.\n"
+                f"Keep your focus. You have {time_remaining_diplay.minutes} minutes, {time_remaining_diplay.seconds} seconds remaining in this Pomodoro.\n"
             )
             time.sleep(5)
             if time_remaining <= timedelta(0, 5, 0):
@@ -103,8 +114,9 @@ class Pomodoro:
     def _run_break_countdown(self):
         while True:
             break_time_remaining = self.remaining_break_time()
+            break_time_remains = self._display_time_delta(break_time_remaining)
             print(
-                f"Whew!! Take a break. You have {break_time_remaining} left in your break\n"
+                f"Whew!! Take a break. You have {break_time_remains.minutes} minutes, {break_time_remains.seconds} seconds left in your break\n"
             )
             time.sleep(5)
             if break_time_remaining <= timedelta(0, 5, 0):
