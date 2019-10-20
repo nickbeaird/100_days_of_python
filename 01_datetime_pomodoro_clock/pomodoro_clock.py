@@ -2,7 +2,6 @@
 import argparse
 from datetime import datetime as dtm, timedelta
 import time
-import sys
 
 
 class Pomodoro:
@@ -135,7 +134,7 @@ if __name__ == "__main__":
                 pom.start_pomodoro()
                 pom.start_break()
 
-            if pom.all_done() == True:
+            if pom.all_done() is True:
                 break
 
     except KeyboardInterrupt:
